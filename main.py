@@ -1,6 +1,7 @@
 from random import randint
 import datetime
 from datetime import timedelta
+from schedule import student
 
 
 class dateTimeMath(object):
@@ -9,8 +10,8 @@ class dateTimeMath(object):
  
   num = 1
   def __init__(self):
-    self.date = datetime.datetime.now()
-    self.futureDate = datetime.date
+    self.date = datetime.date.today()
+    self.studentName = None
   
   def promptTime(self, dateObject):
     hour = int(input("Provide the Hour (Ex. 1-12): "))
@@ -19,29 +20,37 @@ class dateTimeMath(object):
     return datetime.datetime.combine(dateObject, Time)
 
   def promptDate(self):
-    year = int(input("Provide a Year (Ex. 2002): "))
-    month = int(input("Provide a Month (Ex. 12): "))
-    day = int(input("Provide a Day (Ex. 05): "))
-    self.futureDate = datetime.date(year, month, day)
-    addTime = int(input("If you want to add a time enter 1 "))
+    name = input("Please enter the students name: ")
+    self.studentName = name
+    changeDate = int(input("Enter 1 if the note is NOT for today's date "))
 
-    if addTime == 1:
-       self.futureDate = self.promptTime(self.futureDate)
+    if changeDate == 1:
+       self.date = input("Enter date in the format 12/12/2012 ")
     
-    return self.futureDate
+    return self.studentName
     
     
 
   def storeDate(self):
-    note = input("Enter Reminder Note: ")
-    self.dateDict[note] = self.futureDate
-    self.num+=1
+    if self.studentName in self.dateDict:
+      self.note = input("Enter Note: ")
+      self.dateDict[self.studentName].newNote(self.note, self.date)
+      print(self.dateDict[self.studentName].head.next.note)
+    else:
+      print("ADD")
+      self.note = input("Enter Reminder Note: ")
+      self.dateDict[self.studentName] = student()
+      self.dateDict[self.studentName].newNote(self.note, self.date)
   
   def displayDates(self):
+    print()
     index = 1
-    for date in self.dateDict.items():
-      print(index, date[0], date[1])
+    for key in self.dateDict.keys():
+      print('Student:', key, end = ' ')
+      self.dateDict[key].printStudentInfo()
       index+=1
+      if index % 3 == 0:
+        print("\n")
       
 
   def dateGetter(self):
@@ -67,7 +76,7 @@ class dateTimeMath(object):
       del self.dateDict[key]
     elif selection == 2:
       self.promptDate()
-      self.dateDict[key] = self.futureDate
+      self.dateDict[key] = self.studentName
   
   def shawnIsConfused(self, val):
     isString = True
@@ -103,26 +112,29 @@ class dateTimeMath(object):
 
   
   def DEBpromptDate(self):
-    year = 2035 + randint(1, 10)
-    month = 1 + randint(1, 10)
-    day = 1 + randint(1, 15)
-    self.futureDate = datetime.date(year, month, day)
-  
-  def DEBstoreDate(self):
-   
- 
-    key = {str(randint(0, 50))}
-    note = ""
-# Strips the newline character
-    for line in range(10):
-      if not randint(0, 50) in {0, 2, 4, 6, 8, 10}:
-        key.add(str(randint(0, 50)))
-      else:
-        break
-    for line in key:
-      note += line
+    names = ['Shawn', 'Rivet', 'Clank', 'Ratchet', 'Tim']
+    name = names[randint(0, 4)]
+    note = randint(0, 1000)
+    self.DEBstoreDate(name, note)
 
-    self.dateDict[note] = self.futureDate
+  def DEBpromptDate2(self):
+    year = 2035 #+ randint(1, 10)
+    month = 2 #+ randint(1, 10)
+    day = 2 #+ randint(1, 15)
+    dateObject = datetime.datetime(year, month, day)
+    hour = randint(1,12)
+    minute = randint(0, 59)
+    Time = datetime.time(hour = hour, minute = minute, second = 0)
+    self.studentName = datetime.datetime.combine(dateObject, Time)
+
+  def DEBstoreDate(self, name, note):
+    if name in self.dateDict:
+      self.dateDict[name].newNote(note, self.date)
+    else:
+      self.dateDict[name] = student()
+      self.dateDict[name].newNote(note, self.date)
+
+  
         
     
   
@@ -130,13 +142,16 @@ class dateTimeMath(object):
     numOfDates = 10
     for i in range(numOfDates):
       self.DEBpromptDate()
-      self.DEBstoreDate()
+     
+      
+
     self.displayDates()
-    self.demoMath()
+    #self.demoMath()
 
 
 date = dateTimeMath()
-date.dateGetter()
+#date.dateGetter()
+
 
 date.debug()
 #date.debug()
